@@ -22,7 +22,7 @@ export default function PurchasesPage() {
 
   useEffect(() => { fetchData(); }, [page]);
 
-  const handleFilter = () => { setPage(1); fetchData(); };
+  const handleFilter = () => { if (page === 1) fetchData(); else setPage(1); };
 
   return (
     <div className="space-y-4">

@@ -10,11 +10,13 @@ import Badge from '@/components/Badge';
 export default function InvoiceDetailPage() {
   const { id } = useParams();
   const [data, setData] = useState<any>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    api.get(`/invoices/${id}`).then(r => setData(r.data)).catch(() => {});
+    api.get(`/invoices/${id}`).then(r => setData(r.data)).catch(() => setError(true));
   }, [id]);
 
+  if (error) return <div className="text-center py-20 text-gray-500">Fatura bulunamadı veya erişim reddedildi.</div>;
   if (!data) return <div className="flex justify-center py-20"><div className="animate-spin h-8 w-8 border-4 border-cyan-600 border-t-transparent rounded-full" /></div>;
 
   return (

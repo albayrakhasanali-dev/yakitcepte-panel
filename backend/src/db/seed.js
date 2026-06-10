@@ -4,11 +4,13 @@ const bcrypt = require('bcryptjs');
 const db = getDb();
 createTables(db);
 
-// Clear existing data
-const tables = ['contract_invoices','device_requests','prepaid_logs','monthly_consumption',
-  'invoice_items','purchases','payments','invoices','devices','device_groups',
-  'credit_limits','users','fleets'];
-tables.forEach(t => db.exec(`DELETE FROM ${t}`));
+// Skip seeding if data already exists
+const existingFleets = db.prepare('SELECT COUNT(*) as c FROM fleets').get().c;
+if (existingFleets > 0) {
+  console.log('Database already seeded, skipping. Delete data/yakitcepte.db to re-seed.');
+  db.close();
+  process.exit(0);
+}
 
 // Seed Fleets
 const fleets = [

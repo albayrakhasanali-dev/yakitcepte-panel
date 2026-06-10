@@ -22,7 +22,7 @@ export default function PaymentsPage() {
 
   useEffect(() => { fetchData(); }, [page]);
 
-  const handleFilter = () => { setPage(1); fetchData(); };
+  const handleFilter = () => { if (page === 1) fetchData(); else setPage(1); };
 
   const typeColors: Record<string, string> = {
     'Banka Hareketi': 'bg-green-500',

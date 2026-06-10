@@ -69,6 +69,18 @@ router.get('/:type', authenticateToken, async (req, res) => {
           { header: 'Durum', key: 'status', width: 10 },
         ];
         break;
+      case 'device_requests':
+        rows = db.prepare(`SELECT dr.*, f.fleet_name FROM device_requests dr LEFT JOIN fleets f ON dr.fleet_id = f.id ${fid ? 'WHERE dr.fleet_id = ?' : ''} ORDER BY dr.created_at DESC`).all(...(fid ? [fid] : []));
+        columns = [
+          { header: 'ID', key: 'id', width: 8 },
+          { header: 'Filo', key: 'fleet_name', width: 20 },
+          { header: 'Plaka', key: 'plate', width: 15 },
+          { header: 'İstek Durumu', key: 'request_status', width: 15 },
+          { header: 'Sipariş Durumu', key: 'order_status', width: 15 },
+          { header: 'Montaj Kodu', key: 'assembly_code', width: 15 },
+          { header: 'Oluşturulma', key: 'created_at', width: 20 },
+        ];
+        break;
       default:
         return res.status(400).json({ error: 'Geçersiz export tipi' });
     }

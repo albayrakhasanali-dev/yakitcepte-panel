@@ -70,6 +70,10 @@ router.put('/:id', authenticateToken, requireAdmin, (req, res) => {
 router.delete('/:id', authenticateToken, requireAdmin, (req, res) => {
   const db = getDb();
   try {
+    const linkedUsers = db.prepare('SELECT COUNT(*) as c FROM users WHERE fleet_id = ?').get(req.params.id).c;
+    if (linkedUsers > 0) {
+      return res.status(400).json({ error: `Bu filoya bağlı ${linkedUsers} kullanıcı var. Önce kullanıcıları silin veya başka filoya taşıyın.` });
+    }
     db.prepare('DELETE FROM fleets WHERE id = ?').run(req.params.id);
     res.json({ success: true });
   } finally { db.close(); }

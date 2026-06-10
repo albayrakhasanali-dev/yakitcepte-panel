@@ -34,7 +34,7 @@ export default function DeviceRequestsPage() {
         <h1 className="text-2xl font-bold text-gray-800">Cihaz İstekleri</h1>
         <div className="flex gap-2">
           <button onClick={() => setShowForm(true)} className="px-4 py-2 bg-cyan-600 text-white rounded-lg text-sm hover:bg-cyan-700">Yeni İstek</button>
-          <ExportButton type="devices" />
+          <ExportButton type="device_requests" />
         </div>
       </div>
 

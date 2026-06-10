@@ -50,23 +50,32 @@ router.get('/', authenticateToken, (req, res) => {
       });
     }
 
-    // Current month & year totals
+    // Current month & year totals (use same year and device_group filters as the chart)
     const now = new Date();
     const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
-    const currentYear = now.getFullYear().toString();
 
+    let thisMonthDgCondition = '';
     const thisMonthParams = [...params];
+    if (deviceGroupId) {
+      thisMonthDgCondition = 'AND p.device_group_name = (SELECT name FROM device_groups WHERE id = ?)';
+      thisMonthParams.push(parseInt(deviceGroupId));
+    }
     const thisMonth = db.prepare(`
       SELECT COALESCE(SUM(litre), 0) as litres, COALESCE(SUM(amount), 0) as amount
       FROM purchases p
-      WHERE p.purchase_date >= ? AND p.purchase_date <= ? ${fleetCondition}
-    `).get(`${currentYear}-${currentMonth}-01`, `${currentYear}-${currentMonth}-31`, ...thisMonthParams);
+      WHERE p.purchase_date >= ? AND p.purchase_date <= ? ${fleetCondition} ${thisMonthDgCondition}
+    `).get(`${year}-${currentMonth}-01`, `${year}-${currentMonth}-31`, ...thisMonthParams);
 
+    let thisYearDgCondition = '';
     const thisYearParams = [...params];
+    if (deviceGroupId) {
+      thisYearDgCondition = 'AND p.device_group_name = (SELECT name FROM device_groups WHERE id = ?)';
+      thisYearParams.push(parseInt(deviceGroupId));
+    }
     const thisYear = db.prepare(`
       SELECT COALESCE(SUM(litre), 0) as litres, COALESCE(SUM(amount), 0) as amount
       FROM purchases p
-      WHERE p.purchase_date >= ? AND p.purchase_date <= ? ${fleetCondition}
+      WHERE p.purchase_date >= ? AND p.purchase_date <= ? ${fleetCondition} ${thisYearDgCondition}
     `).get(`${year}-01-01`, `${year}-12-31`, ...thisYearParams);
 
     // Device groups for filter

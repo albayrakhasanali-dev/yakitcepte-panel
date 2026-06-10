@@ -13,3 +13,5 @@ services:
         generateValue: true
       - key: NODE_ENV
         value: production
+      - key: CORS_ORIGIN
+        value: https://yakitcepte-panel.vercel.app
